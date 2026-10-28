@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Интерактивная Ёлочка 2027</title>
     <style>
-        /* Живой мерцающий и переливающийся фон */
         body {
             background: radial-gradient(circle at center, #1a2a6c, #b21f1f, #1a2a6c, #0f081d);
             background-size: 300% 300%;
@@ -19,14 +18,11 @@
             overflow: hidden;
             position: relative;
         }
-
         @keyframes auroraBG {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-
-        /* Крупный год 2027 строго по центру экрана за елкой */
         .bg-year {
             position: absolute;
             top: 50%;
@@ -39,10 +35,7 @@
             user-select: none;
             z-index: 0;
             pointer-events: none;
-            text-shadow: 0 0 40px rgba(255, 255, 255, 0.05);
         }
-
-        /* Контейнер сцены — центрирует всё содержимое */
         .scene {
             position: relative;
             width: 460px;
@@ -52,8 +45,6 @@
             align-items: flex-start;
             z-index: 1;
         }
-
-        /* Векторная ёлка занимает всю ширину контейнера */
         .tree-svg {
             position: absolute;
             top: 0;
@@ -62,8 +53,6 @@
             height: 580px;
             filter: drop-shadow(0 15px 20px rgba(0,0,0,0.6));
         }
-
-        /* Интерактивная зона для шариков и гирлянды накладывается поверх елки */
         .interactive-area {
             position: absolute;
             top: 0;
@@ -72,8 +61,6 @@
             height: 580px;
             z-index: 5;
         }
-
-        /* Стили для шариков */
         .toy {
             position: absolute;
             width: 34px;
@@ -91,132 +78,90 @@
             user-select: none;
             transform-origin: center;
         }
-
-        .toy:hover {
-            transform: scale(1.25);
-            z-index: 12;
-        }
-
-        /* СОСТОЯНИЕ 1: Будущие (заблокированные) дни */
-        .toy.locked {
-            background: radial-gradient(circle at 30% 30%, #7f8c8d, #3c4042) !important;
-            cursor: not-allowed;
-            opacity: 0.4;
-        }
-
-        /* СОСТОЯНИЕ 2: Прошедшие (открытые) дни */
-        .toy.opened {
-            opacity: 0.75;
-            background: radial-gradient(circle at 30% 30%, #2ed573, #157f3b) !important;
-        }
-        .toy.opened::after {
-            content: '✓';
-            position: absolute;
-            font-size: 9px;
-            bottom: 1px;
-            right: 3px;
-        }
-
-        /* СОСТОЯНИЕ 3: Доступен сегодня */
+        .toy:hover { transform: scale(1.25); z-index: 12; }
+        .toy.locked { background: radial-gradient(circle at 30% 30%, #7f8c8d, #3c4042) !important; cursor: not-allowed; opacity: 0.4; }
+        .toy.opened { opacity: 0.85; background: radial-gradient(circle at 30% 30%, #2ed573, #157f3b) !important; border: 1px solid #fff; }
+        .toy.opened::after { content: '✓'; position: absolute; font-size: 9px; bottom: 1px; right: 3px; }
         .toy.today {
             background: radial-gradient(circle at 30% 30%, #ff4757, #b31010) !important;
             animation: pulseToday 1.2s infinite alternate;
-            z-index: 10;
-            width: 40px;
-            height: 40px;
-            font-size: 14px;
-            border: 2px solid #fff;
+            z-index: 10; width: 40px; height: 40px; font-size: 14px; border: 2px solid #fff;
         }
-
         @keyframes pulseToday {
             0% { transform: scale(1); box-shadow: 0 0 10px #ff4757, inset -3px -3px 6px rgba(0,0,0,0.5); }
             100% { transform: scale(1.15); box-shadow: 0 0 25px #ff4757, 0 0 10px #f1c40f, inset -3px -3px 6px rgba(0,0,0,0.5); }
         }
-
-        /* Лампочки гирлянды */
-        .light {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            pointer-events: none;
-            animation: flash 1s infinite ease-in-out;
-        }
-
+        .light { position: absolute; width: 6px; height: 6px; border-radius: 50%; pointer-events: none; animation: flash 1s infinite ease-in-out; }
         @keyframes flash {
             0%, 100% { opacity: 0.2; filter: drop-shadow(0 0 1px white); }
             50% { opacity: 1; filter: drop-shadow(0 0 8px cubic-bezier(0.6, -0.28, 0.735, 0.045)); }
         }
-
-        /* Коробки с подарками под елкой */
-        .gifts {
-            position: absolute;
-            bottom: 30px;
-            width: 300px;
-            display: flex;
-            justify-content: space-around;
-            align-items: flex-end;
-            z-index: 6;
-        }
-
-        .gift {
-            position: relative;
-            border-radius: 4px;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.5);
-        }
+        .gifts { position: absolute; bottom: 30px; width: 300px; display: flex; justify-content: space-around; align-items: flex-end; z-index: 6; }
+        .gift { position: relative; border-radius: 4px; box-shadow: 0 8px 15px rgba(0,0,0,0.5); }
         .gift::before { content: ''; position: absolute; top: 0; left: 42%; width: 16%; height: 100%; background: rgba(255,255,255,0.4); }
         .gift::after { content: ''; position: absolute; top: 42%; left: 0; width: 100%; height: 16%; background: rgba(255,255,255,0.4); }
-
         .g1 { width: 55px; height: 55px; background: #e74c3c; transform: rotate(-6deg); }
         .g2 { width: 70px; height: 45px; background: #3498db; }
         .g3 { width: 45px; height: 60px; background: #f1c40f; transform: rotate(8deg); }
     </style>
 </head>
 <body>
-
-    <!-- Фоновый год встроен в переливающийся бэкграунд -->
     <div class="bg-year">2027</div>
-
     <div class="scene">
-        <!-- Векторная елка со звездой -->
         <svg class="tree-svg" viewBox="0 0 400 500">
-            <!-- Звезда -->
             <polygon points="200,10 215,45 250,45 220,65 235,100 200,80 165,100 180,65 150,45 185,45" fill="#f1c40f" filter="drop-shadow(0 0 8px #f1c40f)"/>
-            <!-- Ствол -->
             <rect x="180" y="440" width="40" height="60" fill="#5c4033" />
-            <!-- Ветки -->
             <polygon points="200,70 120,180 280,180" fill="#2d5a27" />
             <polygon points="200,140 90,270 310,270" fill="#244d1f" />
             <polygon points="200,220 60,370 340,370" fill="#1b3b18" />
             <polygon points="200,300 30,450 370,450" fill="#132b11" />
         </svg>
-
-        <!-- Интерактивная зона поверх елки -->
         <div class="interactive-area" id="interactiveArea"></div>
-
-        <!-- Подарки под стволом -->
         <div class="gifts">
-            <div class="gift g1"></div>
-            <div class="gift g2"></div>
-            <div class="gift g3"></div>
+            <div class="gift g1"></div><div class="gift g2"></div><div class="gift g3"></div>
         </div>
     </div>
-
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const area = document.getElementById('interactiveArea');
-            
-            // Получение системной даты
             const today = new Date();
             const currentDay = today.getDate(); 
+            const linksList = {
+                1: "https://youtu.be",
+                2: "https://youtu.be",
+                3: "https://youtu.be",
+                4: "https://youtu.be",
+                5: "https://youtu.be",
+                6: "https://youtu.be",
+                7: "https://youtu.be",
+                8: "https://youtu.be",
+                9: "https://youtu.be",
+                10: "https://youtu.be",
+                11: "https://youtu.be",
+                12: "https://youtu.be",
+                13: "https://youtu.be",
+                14: "https://youtu.be",
+                15: "https://youtu.be",
+                16: "https://youtu.be",
+                17: "https://youtu.be",
+                18: "https://youtu.be",
+                19: "https://youtu.be",
+                20: "https://youtu.be",
+                21: "https://youtu.be",
+                22: "https://youtu.be",
+                23: "https://youtu.be",
+                24: "https://youtu.be",
+                25: "https://youtu.be",
+                26: "https://youtu.be",
+                27: "https://youtu.be",
+                28: "https://youtu.be/BeHfDsboXiw",
+                29: "https://youtu.be",
+                30: "https://youtu.be",
+                31: "https://youtu.be"
+            };
 
-            // Ссылка на YouTube видео
-            const targetLink = "https://youtu.be";
-            
             const toyColors = ['#e74c3c', '#3498db', '#9b59b6', '#e67e22', '#1abc9c', '#e84393', '#fdcb6e'];
             const lightColors = ['#ff4757', '#eccc68', '#70a1ff', '#2ed573', '#ffa502'];
-
-            // Выверенные координаты шаров внутри сетки 460x580
             const coords = [
                 {x:215, y:110}, {x:190, y:130}, {x:240, y:150}, {x:170, y:165}, 
                 {x:210, y:180}, {x:260, y:195}, {x:140, y:210}, {x:190, y:225}, 
@@ -228,9 +173,10 @@
                 {x:160, y:470}, {x:210, y:475}, {x:260, y:470}
             ];
 
+            let openedDays = JSON.parse(localStorage.getItem('adventOpenedDays 2026')) || [];
+
             for (let i = 1; i <= 31; i++) {
                 const c = coords[i-1];
-                
                 const toy = document.createElement('div');
                 toy.className = 'toy';
                 toy.innerText = i;
@@ -239,14 +185,25 @@
 
                 const randomColor = toyColors[i % toyColors.length];
                 toy.style.background = `radial-gradient(circle at 30% 30%, ${randomColor}, #000000 120%)`;
+                const currentToyLink = linksList[i];
 
-                // Автоматическая проверка дней календаря
-                if (i < currentDay) {
+                const openBall = (dayNumber) => {
+                    if (!openedDays.includes(dayNumber)) {
+                        openedDays.push(dayNumber);
+                        localStorage.setItem('adventOpenedDays 2026', JSON.stringify(openedDays));
+                    }
+                    toy.className = 'toy opened';
+                    window.open(currentToyLink, '_blank');
+                };
+
+                if (openedDays.includes(i)) {
                     toy.classList.add('opened');
-                    toy.addEventListener('click', () => window.open(targetLink, '_blank'));
+                    toy.addEventListener('click', () => window.open(currentToyLink, '_blank'));
                 } else if (i === currentDay) {
                     toy.classList.add('today');
-                    toy.addEventListener('click', () => window.open(targetLink, '_blank'));
+                    toy.addEventListener('click', () => openBall(i));
+                } else if (i < currentDay) {
+                    toy.addEventListener('click', () => openBall(i));
                 } else {
                     toy.classList.add('locked');
                     toy.addEventListener('click', () => alert(`🔒 Этот шар откроется только ${i} октября!`));
@@ -254,14 +211,12 @@
 
                 area.appendChild(toy);
 
-                // Огоньки гирлянды
                 const light = document.createElement('div');
                 light.className = 'light';
                 light.style.left = `${c.x + 15}px`;
                 light.style.top = `${c.y - 10}px`;
                 light.style.backgroundColor = lightColors[i % lightColors.length];
                 light.style.animationDelay = `${(i % 4) * 0.25}s`;
-
                 area.appendChild(light);
             }
         });
