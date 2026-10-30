@@ -4,222 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Интерактивная Ёлочка 2027</title>
-    <style>
-        body {
-            background: radial-gradient(circle at center, #1a2a6c, #b21f1f, #1a2a6c, #0f081d);
-            background-size: 300% 300%;
-            animation: auroraBG 10s ease infinite;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            overflow: hidden;
-            position: relative;
-        }
-        @keyframes auroraBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        .bg-year {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 24vw;
-            font-weight: 900;
-            color: rgba(255, 255, 255, 0.035);
-            letter-spacing: 10px;
-            user-select: none;
-            z-index: 0;
-            pointer-events: none;
-        }
-        .scene {
-            position: relative;
-            width: 460px;
-            height: 680px;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            z-index: 1;
-        }
-        .tree-svg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 580px;
-            filter: drop-shadow(0 15px 20px rgba(0,0,0,0.6));
-        }
-        .interactive-area {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 580px;
-            z-index: 5;
-        }
-        .toy {
-            position: absolute;
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: inset -3px -3px 6px rgba(0,0,0,0.5), 0 4px 8px rgba(0,0,0,0.4);
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            user-select: none;
-            transform-origin: center;
-        }
-        .toy:hover { transform: scale(1.25); z-index: 12; }
-        .toy.locked { background: radial-gradient(circle at 30% 30%, #7f8c8d, #3c4042) !important; cursor: not-allowed; opacity: 0.4; }
-        .toy.opened { opacity: 0.85; background: radial-gradient(circle at 30% 30%, #2ed573, #157f3b) !important; border: 1px solid #fff; }
-        .toy.opened::after { content: '✓'; position: absolute; font-size: 9px; bottom: 1px; right: 3px; }
-        .toy.today {
-            background: radial-gradient(circle at 30% 30%, #ff4757, #b31010) !important;
-            animation: pulseToday 1.2s infinite alternate;
-            z-index: 10; width: 40px; height: 40px; font-size: 14px; border: 2px solid #fff;
-        }
-        @keyframes pulseToday {
-            0% { transform: scale(1); box-shadow: 0 0 10px #ff4757, inset -3px -3px 6px rgba(0,0,0,0.5); }
-            100% { transform: scale(1.15); box-shadow: 0 0 25px #ff4757, 0 0 10px #f1c40f, inset -3px -3px 6px rgba(0,0,0,0.5); }
-        }
-        .light { position: absolute; width: 6px; height: 6px; border-radius: 50%; pointer-events: none; animation: flash 1s infinite ease-in-out; }
-        @keyframes flash {
-            0%, 100% { opacity: 0.2; filter: drop-shadow(0 0 1px white); }
-            50% { opacity: 1; filter: drop-shadow(0 0 8px cubic-bezier(0.6, -0.28, 0.735, 0.045)); }
-        }
-        .gifts { position: absolute; bottom: 30px; width: 300px; display: flex; justify-content: space-around; align-items: flex-end; z-index: 6; }
-        .gift { position: relative; border-radius: 4px; box-shadow: 0 8px 15px rgba(0,0,0,0.5); }
-        .gift::before { content: ''; position: absolute; top: 0; left: 42%; width: 16%; height: 100%; background: rgba(255,255,255,0.4); }
-        .gift::after { content: ''; position: absolute; top: 42%; left: 0; width: 100%; height: 16%; background: rgba(255,255,255,0.4); }
-        .g1 { width: 55px; height: 55px; background: #e74c3c; transform: rotate(-6deg); }
-        .g2 { width: 70px; height: 45px; background: #3498db; }
-        .g3 { width: 45px; height: 60px; background: #f1c40f; transform: rotate(8deg); }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="bg-year">2027</div>
-    <div class="scene">
-        <svg class="tree-svg" viewBox="0 0 400 500">
-            <polygon points="200,10 215,45 250,45 220,65 235,100 200,80 165,100 180,65 150,45 185,45" fill="#f1c40f" filter="drop-shadow(0 0 8px #f1c40f)"/>
-            <rect x="180" y="440" width="40" height="60" fill="#5c4033" />
-            <polygon points="200,70 120,180 280,180" fill="#2d5a27" />
-            <polygon points="200,140 90,270 310,270" fill="#244d1f" />
-            <polygon points="200,220 60,370 340,370" fill="#1b3b18" />
-            <polygon points="200,300 30,450 370,450" fill="#132b11" />
-        </svg>
-        <div class="interactive-area" id="interactiveArea"></div>
-        <div class="gifts">
-            <div class="gift g1"></div><div class="gift g2"></div><div class="gift g3"></div>
+    
+    <div class="wrapper">
+        <div class="scene">
+            <svg class="tree-svg" viewBox="0 0 400 500">
+                <polygon points="200,10 215,45 250,45 220,65 235,100 200,80 165,100 180,65 150,45 185,45" fill="#f1c40f" filter="drop-shadow(0 0 8px #f1c40f)"/>
+                <rect x="180" y="440" width="40" height="60" fill="#5c4033" />
+                <polygon points="200,70 120,180 280,180" fill="#2d5a27" />
+                <polygon points="200,140 90,270 310,270" fill="#244d1f" />
+                <polygon points="200,220 60,370 340,370" fill="#1b3b18" />
+                <polygon points="200,300 30,450 370,450" fill="#132b11" />
+            </svg>
+            
+            <!-- Интерактивная область для шаров и огоньков -->
+            <div class="interactive-area" id="interactiveArea"></div>
+            
+            <!-- Секция HTML подарков -->
+            <div class="gifts-section">
+                <div class="gift g1" data-id="1" title="Нажмите, чтобы открыть подарок"></div>
+                <div class="gift g2" data-id="2" title="Нажмите, чтобы открыть подарок"></div>
+                <div class="gift g3" data-id="3" title="Нажмите, чтобы открыть подарок"></div>
+            </div>
         </div>
     </div>
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const area = document.getElementById('interactiveArea');
-            const today = new Date();
-            const currentDay = today.getDate(); 
-            const linksList = {
-                1: "https://youtu.be",
-                2: "https://youtu.be",
-                3: "https://youtu.be",
-                4: "https://youtu.be",
-                5: "https://youtu.be",
-                6: "https://youtu.be",
-                7: "https://youtu.be",
-                8: "https://youtu.be",
-                9: "https://youtu.be",
-                10: "https://youtu.be",
-                11: "https://youtu.be",
-                12: "https://youtu.be",
-                13: "https://youtu.be",
-                14: "https://youtu.be",
-                15: "https://youtu.be",
-                16: "https://youtu.be",
-                17: "https://youtu.be",
-                18: "https://youtu.be",
-                19: "https://youtu.be",
-                20: "https://youtu.be",
-                21: "https://youtu.be",
-                22: "https://youtu.be",
-                23: "https://youtu.be",
-                24: "https://youtu.be",
-                25: "https://youtu.be",
-                26: "https://youtu.be",
-                27: "https://youtu.be",
-                28: "https://youtu.be/BeHfDsboXiw",
-                29: "https://youtu.be",
-                30: "https://youtu.be",
-                31: "https://youtu.be"
-            };
 
-            const toyColors = ['#e74c3c', '#3498db', '#9b59b6', '#e67e22', '#1abc9c', '#e84393', '#fdcb6e'];
-            const lightColors = ['#ff4757', '#eccc68', '#70a1ff', '#2ed573', '#ffa502'];
-            const coords = [
-                {x:215, y:110}, {x:190, y:130}, {x:240, y:150}, {x:170, y:165}, 
-                {x:210, y:180}, {x:260, y:195}, {x:140, y:210}, {x:190, y:225}, 
-                {x:235, y:230}, {x:285, y:245}, {x:120, y:265}, {x:170, y:275}, 
-                {x:220, y:285}, {x:270, y:295}, {x:315, y:310}, {x:100, y:330}, 
-                {x:150, y:340}, {x:200, y:345}, {x:250, y:355}, {x:300, y:365}, 
-                {x:345, y:385}, {x:80,  y:400}, {x:130, y:410}, {x:180, y:415}, 
-                {x:230, y:420}, {x:280, y:425}, {x:330, y:430}, {x:370, y:445},
-                {x:160, y:470}, {x:210, y:475}, {x:260, y:470}
-            ];
+    <!-- Модальное окно -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <button class="modal-close" id="modalClose">&times;</button>
+            <div class="modal-icon" id="modalIcon">🎄</div>
+            <h3 class="modal-title" id="modalTitle">Заголовок</h3>
+            <p class="modal-text" id="modalText">Текст сообщения...</p>
+            <a href="#" target="_blank" class="modal-btn" id="modalBtn">Смотреть тренировку</a>
+        </div>
+    </div>
 
-            let openedDays = JSON.parse(localStorage.getItem('adventOpenedDays 2026')) || [];
-
-            for (let i = 1; i <= 31; i++) {
-                const c = coords[i-1];
-                const toy = document.createElement('div');
-                toy.className = 'toy';
-                toy.innerText = i;
-                toy.style.left = `${c.x}px`;
-                toy.style.top = `${c.y}px`;
-
-                const randomColor = toyColors[i % toyColors.length];
-                toy.style.background = `radial-gradient(circle at 30% 30%, ${randomColor}, #000000 120%)`;
-                const currentToyLink = linksList[i];
-
-                const openBall = (dayNumber) => {
-                    if (!openedDays.includes(dayNumber)) {
-                        openedDays.push(dayNumber);
-                        localStorage.setItem('adventOpenedDays 2026', JSON.stringify(openedDays));
-                    }
-                    toy.className = 'toy opened';
-                    window.open(currentToyLink, '_blank');
-                };
-
-                if (openedDays.includes(i)) {
-                    toy.classList.add('opened');
-                    toy.addEventListener('click', () => window.open(currentToyLink, '_blank'));
-                } else if (i === currentDay) {
-                    toy.classList.add('today');
-                    toy.addEventListener('click', () => openBall(i));
-                } else if (i < currentDay) {
-                    toy.addEventListener('click', () => openBall(i));
-                } else {
-                    toy.classList.add('locked');
-                    toy.addEventListener('click', () => alert(`🔒 Этот шар откроется только ${i} октября!`));
-                }
-
-                area.appendChild(toy);
-
-                const light = document.createElement('div');
-                light.className = 'light';
-                light.style.left = `${c.x + 15}px`;
-                light.style.top = `${c.y - 10}px`;
-                light.style.backgroundColor = lightColors[i % lightColors.length];
-                light.style.animationDelay = `${(i % 4) * 0.25}s`;
-                area.appendChild(light);
-            }
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
