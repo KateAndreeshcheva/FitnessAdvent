@@ -6,11 +6,17 @@
     <title>Интерактивная Ёлочка 2027</title>
     <link rel="stylesheet" href="style.css">
 </head>
+<!-- Вставить сразу после <body> и перед <div class="bg-year">2027</div> -->
+<!-- Разместите строго СРАЗУ ПОСЛЕ тега <body> перед всеми остальными элементами -->
+<div class="countdown-container">
+    <span class="countdown-title">До Нового года осталось:</span>
+    <span class="countdown-timer" id="countdownTimer">0</span>
+</div>
+
 <body>
-    <div class="bg-year">2027</div>
-    
     <div class="wrapper">
         <div class="scene">
+          <div class="bg-year">2027</div>
             <svg class="tree-svg" viewBox="0 0 400 500">
                 <polygon points="200,10 215,45 250,45 220,65 235,100 200,80 165,100 180,65 150,45 185,45" fill="#f1c40f" filter="drop-shadow(0 0 8px #f1c40f)"/>
                 <rect x="180" y="440" width="40" height="60" fill="#5c4033" />
