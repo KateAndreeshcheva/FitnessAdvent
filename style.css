@@ -1,15 +1,24 @@
+/* ==========================================================================
+   1. БАЗОВЫЕ НАСТРОЙКИ СТРАНИЦЫ И ФОН АВРОРЫ
+   ========================================================================= */
 body {
     background: radial-gradient(circle at center, #1a2a6c, #b21f1f, #1a2a6c, #0f081d);
     background-size: 300% 300%;
     animation: auroraBG 10s ease infinite;
+    
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: flex-start;
     align-items: center;
+    
     min-height: 100vh;
     margin: 0;
     font-family: 'Segoe UI', Roboto, sans-serif;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     position: relative;
+    box-sizing: border-box;
+    padding-top: 15px; 
 }
 
 @keyframes auroraBG {
@@ -18,35 +27,134 @@ body {
     100% { background-position: 0% 50%; }
 }
 
+/* 
+   АДАПТИВНЫЙ ФОН 2027 НА УРОВНЕ ЗВЕЗДЫ + ПЛАВНЫЙ СПУСК
+*/
 .bg-year {
     position: absolute;
-    top: 50%;
+    top: 12%; 
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 24vw;
+    width: 180%; 
+    text-align: center;
     font-weight: 900;
-    color: rgba(255, 255, 255, 0.035);
-    letter-spacing: 10px;
+    line-height: 0.8;
+    color: rgba(255, 255, 255, 0.035); 
     user-select: none;
-    z-index: 0;
     pointer-events: none;
+    z-index: 1; 
+    
+    font-size: 43cqw; 
+    letter-spacing: 2.2cqw; 
+    
+    /* Синхронизированная анимация спуска вместе с таймером */
+    opacity: 0;
+    animation: backgroundFadeIn 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation-delay: 0.3s;
 }
 
+/* Специальные ключевые кадры для спуска фона с сохранением центрирования по оси X */
+@keyframes backgroundFadeIn {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -30px); /* Спускается сверху вниз на 20px сильнее */
+        filter: blur(4px);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%); /* Возвращается в идеальный центр */
+        filter: blur(0);
+    }
+}
+
+/* ==========================================================================
+   2. ПОЛНОСТЬЮ АДАПТИВНЫЙ ТАЙМЕР (СИНХРОННЫЙ СПУСК)
+   ========================================================================= */
+.countdown-container {
+    text-align: center;
+    z-index: 100;
+    width: 90%;
+    max-width: 320px; 
+    box-sizing: border-box;
+    
+    background: rgba(20, 20, 35, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 8px 16px; 
+    border-radius: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap; 
+    margin-bottom: 15px; 
+    
+    font-size: 3.5vw; 
+    
+    /* Анимация плавного спуска сверху */
+    opacity: 0;
+    animation: timerFadeIn 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation-delay: 0.3s;
+}
+
+.countdown-title {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.9em; 
+    font-weight: 500;
+    margin-right: 6px;
+    white-space: nowrap;
+    letter-spacing: 0.3px;
+}
+
+.countdown-timer {
+    color: #f1c40f;
+    font-size: 1.05em; 
+    font-weight: 800;
+    text-shadow: 0 0 10px rgba(241, 196, 15, 0.4);
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    white-space: nowrap;
+}
+
+@keyframes timerFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px); /* Спускается сверху вниз */
+        filter: blur(3px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+}
+
+@media (min-width: 440px) {
+    .countdown-container {
+        font-size: 14px; 
+    }
+}
+
+/* ==========================================================================
+   3. ОБЕРТКА И СЦЕНА ЁЛКИ
+   ========================================================================= */
 .wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
-    max-width: 460px;
-    padding: 10px;
+    max-width: 440px; 
+    padding: 0 10px;
     box-sizing: border-box;
     z-index: 1;
 }
 
 .scene {
+    container-type: inline-size; 
     position: relative;
     width: 100%;
-    aspect-ratio: 460 / 580;
+    aspect-ratio: 440 / 530; 
     display: flex;
     justify-content: center;
     align-items: flex-start;
@@ -59,6 +167,7 @@ body {
     width: 100%;
     height: 100%;
     filter: drop-shadow(0 15px 20px rgba(0,0,0,0.6));
+    z-index: 2; 
 }
 
 .interactive-area {
@@ -70,7 +179,10 @@ body {
     z-index: 5;
 }
 
-/* Шары */
+
+/* ==========================================================================
+   4. ИНТЕРАКТИВНЫЕ ШАРЫ (ОБНОВЛЕННАЯ ЛОГИКА ЦВЕТОВ)
+   ========================================================================== */
 .toy {
     position: absolute;
     width: 8%;
@@ -84,22 +196,30 @@ body {
     font-weight: bold;
     cursor: pointer;
     box-shadow: inset -3px -3px 6px rgba(0,0,0,0.5), 0 4px 8px rgba(0,0,0,0.4);
-    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s;
     user-select: none;
     transform: translate(-50%, -50%);
+    opacity: 1; /* По умолчанию все доступные дни яркие и цветные */
 }
 
 @media (max-width: 440px) {
     .toy { font-size: 10px; }
 }
 
-.toy:hover { transform: translate(-50%, -50%) scale(1.25); z-index: 12; }
-.toy.locked { background: radial-gradient(circle at 30% 30%, #7f8c8d, #3c4042) !important; cursor: not-allowed; opacity: 0.4; }
-.toy.opened { opacity: 0.85; background: radial-gradient(circle at 30% 30%, #2ed573, #157f3b) !important; border: 1px solid #fff; }
-.toy.opened::after { content: '✓'; position: absolute; font-size: 8px; bottom: 1px; right: 2px; }
+.toy:hover:not(.locked) { 
+    transform: translate(-50%, -50%) scale(1.25); 
+    z-index: 12; 
+}
 
+/* Будущие заблокированные дни — строго серые */
+.toy.locked { 
+    background: radial-gradient(circle at 30% 30%, #7f8c8d, #3c4042) !important; 
+    cursor: not-allowed; 
+    opacity: 0.35; 
+}
+
+/* Активный сегодняшний день — цветной + мягкая анимация пульсации */
 .toy.today {
-    background: radial-gradient(circle at 30% 30%, #ff4757, #b31010) !important;
     animation: pulseToday 1.2s infinite alternate;
     z-index: 10;
     width: 9.5%;
@@ -107,11 +227,33 @@ body {
 }
 
 @keyframes pulseToday {
-    0% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 10px #ff4757, inset -3px -3px 6px rgba(0,0,0,0.5); }
-    100% { transform: translate(-50%, -50%) scale(1.15); box-shadow: 0 0 25px #ff4757, 0 0 10px #f1c40f, inset -3px -3px 6px rgba(0,0,0,0.5); }
+    0% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 10px rgba(255,255,255,0.5), inset -3px -3px 6px rgba(0,0,0,0.5); }
+    100% { transform: translate(-50%, -50%) scale(1.12); box-shadow: 0 0 20px #f1c40f, inset -3px -3px 6px rgba(0,0,0,0.5); }
 }
 
-/* Огоньки гирлянды */
+/* Открытые тренировки сохраняют свой цвет фона, но получают галочку */
+.toy[data-status="checked"] {
+    opacity: 0.85 !important;
+    border: 1px solid rgba(255, 255, 255, 0.9) !important;
+    box-shadow: inset -2px -2px 4px rgba(0,0,0,0.4);
+}
+
+/* Белая контрастная галочка поверх родного цвета */
+.toy[data-status="checked"]::after {
+    content: '✓' !important;
+    position: absolute !important;
+    font-size: 11px !important;
+    bottom: 0px !important;
+    right: 3px !important;
+    color: #ffffff !important;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.9) !important;
+    font-weight: 900 !important;
+    z-index: 5 !important;
+}
+
+/* ==========================================================================
+   5. ОГОНЬКИ ГИРЛЯНДЫ
+   ========================================================================== */
 .light { 
     position: absolute; 
     width: 1.5%; 
@@ -127,7 +269,9 @@ body {
     50% { opacity: 1; filter: drop-shadow(0 0 8px currentColor); }
 }
 
-/* Подарки */
+/* ==========================================================================
+   6. СЕКЦИЯ ПОДАРКОВ
+   ========================================================================== */
 .gifts-section {
     position: absolute;
     bottom: -15px;
@@ -166,7 +310,9 @@ body {
     100% { transform: translateY(-1px) scale(0.98) rotate(calc(var(--rot, 0deg) - 2deg)); }
 }
 
-/* Модальное окно */
+/* ==========================================================================
+   7. МОДАЛЬНЫЕ ОКНА
+   ========================================================================== */
 .modal-overlay {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -174,7 +320,7 @@ body {
     display: flex; justify-content: center; align-items: center;
     opacity: 0; pointer-events: none;
     transition: opacity 0.3s ease;
-    z-index: 100;
+    z-index: 200;
     backdrop-filter: blur(3px);
 }
 .modal-overlay.active { opacity: 1; pointer-events: auto; }
@@ -202,3 +348,17 @@ body {
 .modal-text { color: rgba(255, 255, 255, 0.85); font-size: 15px; line-height: 1.5; margin-bottom: 20px; }
 .modal-btn { display: inline-block; background: #ff4757; color: white; padding: 12px 24px; border-radius: 25px; text-decoration: none; font-weight: bold; transition: background 0.2s, transform 0.2s; box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4); }
 .modal-btn:hover { background: #ff2a3a; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 71, 87, 0.6); }
+
+/* ==========================================================================
+   8. МЕДИА-ОПТИМИЗАЦИЯ ДЛЯ КОРОТКИХ И СВЕРХМАЛЕНЬКИХ ЭКРАНОВ
+   ========================================================================== */
+@media (max-height: 680px) {
+    body { padding-top: 8px; }
+    .countdown-container { padding: 6px 12px; margin-bottom: 8px; }
+    .wrapper { max-width: 370px; } /* Елка плавно масштабируется, чтобы не создавать вертикальный скролл */
+}
+
+@media (max-width: 340px) {
+    .countdown-container { padding: 4px 10px; }
+    .wrapper { max-width: 310px; }
+}
