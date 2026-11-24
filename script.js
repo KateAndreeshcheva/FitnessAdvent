@@ -5,12 +5,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // ==========================================
   // ГЛАВНЫЙ ПЕРЕКЛЮЧАТЕЛЬ РЕЖИМА
   // ==========================================
-  // ПОСТАВЬТЕ true — для тестирования прямо сейчас (откроются дни до 31-го числа)
-  // ПОСТАВЬТЕ false — перед публикацией для клиентов в декабре!
+  const IS_TEST_MODE = false;
 
-  const IS_TEST_MODE = false; // РЕЛИЗНЫЙ РЕЖИМ ПЕРЕД ОПЛАТАМИ КЛИЕНТОВ
-
-  // Логика автоматического определения даты
   let currentDay, currentMonth;
 
   if (IS_TEST_MODE) {
@@ -20,18 +16,87 @@ document.addEventListener("DOMContentLoaded", () => {
     currentDay = today.getDate();
     currentMonth = today.getMonth(); 
 
-    // БЕЗОПАСНЫЙ СБРОС: Если клиент зашел в ноябре, а в базе есть тестовые логи — стираем их!
+    // В ноябре сбрасываем тестовые шары и подарки, но сохраняем статус прочитанного введения!
     if (currentMonth < 11) { 
       localStorage.removeItem("adventOpenedDays_2027");
       localStorage.removeItem("adventOpenedGift_2027");
     }
   }
+
+  // ==========================================
+  // ЛОГИКА ЗВЕЗДЫ И УКАЗАТЕЛЯ (ВВЕДЕНИЕ)
+  // ==========================================
+  const treeStar = document.getElementById("treeStar");
+  const starPointer = document.getElementById("starPointer");
+  const starPointerText = document.getElementById("starPointerText");
+  const introOverlay = document.getElementById("introOverlay");
+  const introCloseBtn = document.getElementById("introCloseBtn");
+  const introConfirmBtn = document.getElementById("introConfirmBtn");
+
+  // Возможные статусы:
+  // null      -> не открывал ('Зажги звезду', обычная желтая звезда)
+  // 'opened'  -> открыл и закрыл крестиком ('Дочитай до конца', звезда не загорелась)
+  // 'read'    -> дочитал и нажал кнопку внизу (значок 'i', звезда ярко сияет)
+  let introStatus = localStorage.getItem("adventIntroStatus_2027");
+
+  function renderStarState() {
+    if (!treeStar || !starPointer) return;
+
+    treeStar.classList.remove("is-lit");
+    starPointer.classList.remove("is-opened", "is-read");
+
+    if (introStatus === "read") {
+      treeStar.classList.add("is-lit");
+      starPointer.classList.add("is-read");
+      starPointerText.innerText = "i";
+      starPointer.title = "Перечитать правила и теорию";
+    } else if (introStatus === "opened") {
+      starPointer.classList.add("is-opened");
+      starPointerText.innerText = "Дочитай до конца";
+      starPointer.title = "Нажмите, чтобы дочитать правила и зажечь звезду";
+    } else {
+      starPointerText.innerText = "Зажги звезду";
+      starPointer.title = "Нажмите, чтобы прочитать введение и зажечь звезду";
+    }
+  }
+
+  function openIntroModal() {
+    introOverlay.classList.add("active");
+    if (!introStatus) {
+      introStatus = "opened";
+      localStorage.setItem("adventIntroStatus_2027", "opened");
+      renderStarState();
+    }
+  }
+
+  function closeIntroModal() {
+    introOverlay.classList.remove("active");
+  }
+
+  if (treeStar && starPointer && introOverlay) {
+    treeStar.addEventListener("click", openIntroModal);
+    starPointer.addEventListener("click", openIntroModal);
+
+    introCloseBtn.addEventListener("click", closeIntroModal);
+    introOverlay.addEventListener("click", (e) => {
+      if (e.target === introOverlay) closeIntroModal();
+    });
+
+    introConfirmBtn.addEventListener("click", () => {
+      introStatus = "read";
+      localStorage.setItem("adventIntroStatus_2027", "read");
+      renderStarState();
+      closeIntroModal();
+    });
+
+    renderStarState();
+  }
+
   // ==========================================
   // ЛОГИКА ОБРАТНОГО ОТСЧЕТА ДО НОВОГО ГОДА
   // ==========================================
   function updateCountdown() {
     const now = new Date();
-    // Наступление 2027 года (1 января 2027 00:00:00)
     const nextYear = new Date(2027, 0, 1, 0, 0, 0); 
     const diff = nextYear - now;
 
@@ -47,9 +112,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   
   updateCountdown();
-  setInterval(updateCountdown, 60000); // Обновление раз в минуту
+  setInterval(updateCountdown, 60000);
 
-  // 31 личная фитнес-аффирмация и комплимент для читателя
   const factsList = {
     1: "Ты — человек, который сегодня сделал выбор в пользу своего здоровья, пока остальные ищут оправдания. Твое упорство восхищает, начни этот день мощно!",
     2: "В тебе скрыто гораздо больше силы и выносливости, чем тебе кажется. Каждый твой шаг сегодня — это манифест твоей будущей идеальной формы!",
@@ -134,11 +198,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.target === overlay) overlay.classList.remove("active");
   });
 
-  // Единые и синхронизированные ключи для 2027 года
   let openedDays = JSON.parse(localStorage.getItem("adventOpenedDays_2027")) || [];
   let openedGift = localStorage.getItem("adventOpenedGift_2027") || null;
 
-  // Рисуем шары и огоньки
   for (let i = 1; i <= 31; i++) {
     const c = coords[i - 1];
     if (!c) continue;
@@ -153,65 +215,57 @@ document.addEventListener("DOMContentLoaded", () => {
     const currentToyLink = linksList[i];
     const dayFact = factsList[i] || "Ты создаешь себя каждую секунду. Проведи этот день активно!";
 
-    // НАДЁЖНАЯ ФУНКЦИЯ ОТКРЫТИЯ (БЕЗ ИЗМЕНЕНИЯ КЛАССОВ ЦВЕТА)
     const openBall = (dayNumber) => {
       if (!openedDays.includes(dayNumber)) {
         openedDays.push(dayNumber);
         localStorage.setItem("adventOpenedDays_2027", JSON.stringify(openedDays));
       }
       
-      // Используем безопасный дата-атрибут для галочки, цвет остается родным
       toy.setAttribute("data-status", "checked"); 
       
       showModal("✨", `Твоя фитнес-сила: День ${dayNumber}`, dayFact, currentToyLink);
       checkGiftsAvailability();
     };
 
-    // Определение статуса дня
     let isLocked, isToday;
 
     if (IS_TEST_MODE) {
       isLocked = i > currentDay;
       isToday = i === currentDay;
     } else {
-      if (currentMonth < 11) { // Еще не декабрь
+      if (currentMonth < 11) {
         isLocked = true;
         isToday = false;
-      } else if (currentMonth > 11) { // Уже январь следующего года
+      } else if (currentMonth > 11) {
         isLocked = false;
         isToday = false;
-      } else { // Декабрь
+      } else {
         isLocked = i > currentDay;
         isToday = i === currentDay;
       }
     }
 
     if (isLocked) {
-      toy.classList.add("locked"); // Стилизация серого цвета из CSS через !important
+      toy.classList.add("locked");
       toy.addEventListener("click", () =>
         showModal("🔒", "День заблокирован", `Этот шар станет доступен только ${i} декабря!`)
       );
     } else {
-      // Если день настал или прошел — жестко прописываем родной сгенерированный цвет в инлайн-стиль
       toy.style.setProperty('background', `radial-gradient(circle at 30% 30%, ${randomColor}, #000000 120%)`, 'important');
 
-      // Проверка: если этот день уже был открыт ранее
       if (openedDays.includes(i)) {
         toy.setAttribute("data-status", "checked");
       }
       
-      // Сегодняшний активный шар получает пульсацию, только если еще не открыт
       if (isToday && !openedDays.includes(i)) {
         toy.classList.add("today");
       }
 
-      // Все доступные (текущие и прошлые пропущенные) шары кликабельны
       toy.addEventListener("click", () => openBall(i));
     }
 
     area.appendChild(toy);
 
-    // Создаем HTML-огонек
     const light = document.createElement("div");
     light.className = "light";
     light.style.left = `${c.x + 3}%`;
@@ -233,7 +287,6 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   function checkGiftsAvailability() {
-    // Синхронно считываем данные из правильного ключа 2027 года
     const updatedOpenedDays = JSON.parse(localStorage.getItem("adventOpenedDays_2027")) || [];
     const totalOpened = updatedOpenedDays.length;
     const isAllWorkoutsDone = totalOpened >= 31;
@@ -254,7 +307,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const id = gift.getAttribute("data-id");
 
     gift.addEventListener("click", () => {
-      // Проверяем актуальное количество тренировок в базе данных 2027
       const updatedOpenedDays = JSON.parse(localStorage.getItem("adventOpenedDays_2027")) || [];
       const totalOpened = updatedOpenedDays.length;
 
