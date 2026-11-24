@@ -6,19 +6,33 @@
     <title>Интерактивная Ёлочка 2027</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<!-- Вставить сразу после <body> и перед <div class="bg-year">2027</div> -->
-<!-- Разместите строго СРАЗУ ПОСЛЕ тега <body> перед всеми остальными элементами -->
-<div class="countdown-container">
-    <span class="countdown-title">До Нового года осталось:</span>
-    <span class="countdown-timer" id="countdownTimer">0</span>
-</div>
-
 <body>
+    <div class="countdown-container">
+        <span class="countdown-title">До Нового года осталось:</span>
+        <span class="countdown-timer" id="countdownTimer">0</span>
+    </div>
+
     <div class="wrapper">
         <div class="scene">
-          <div class="bg-year">2027</div>
+            <div class="bg-year">2027</div>
+
+            <div class="star-pointer" id="starPointer" title="Нажмите, чтобы прочитать введение">
+                <span id="starPointerText">Зажги звезду</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14M13 5l7 7-7 7"/>
+                </svg>
+            </div>
+
             <svg class="tree-svg" viewBox="0 0 400 500">
-                <polygon points="200,10 215,45 250,45 220,65 235,100 200,80 165,100 180,65 150,45 185,45" fill="#f1c40f" filter="drop-shadow(0 0 8px #f1c40f)"/>
+                <defs>
+                    <radialGradient id="starLitGrad" cx="50%" cy="50%" r="55%">
+                        <stop offset="0%" stop-color="#ffffff" />
+                        <stop offset="45%" stop-color="#fff9c4" />
+                        <stop offset="85%" stop-color="#f1c40f" />
+                        <stop offset="100%" stop-color="#f39c12" />
+                    </radialGradient>
+                </defs>
+                <polygon id="treeStar" class="tree-star-svg" points="200,10 215,45 250,45 220,65 235,100 200,80 165,100 180,65 150,45 185,45" />
                 <rect x="180" y="440" width="40" height="60" fill="#5c4033" />
                 <polygon points="200,70 120,180 280,180" fill="#2d5a27" />
                 <polygon points="200,140 90,270 310,270" fill="#244d1f" />
@@ -26,10 +40,8 @@
                 <polygon points="200,300 30,450 370,450" fill="#132b11" />
             </svg>
             
-            <!-- Интерактивная область для шаров и огоньков -->
             <div class="interactive-area" id="interactiveArea"></div>
             
-            <!-- Секция HTML подарков -->
             <div class="gifts-section">
                 <div class="gift g1" data-id="1" title="Нажмите, чтобы открыть подарок"></div>
                 <div class="gift g2" data-id="2" title="Нажмите, чтобы открыть подарок"></div>
@@ -38,7 +50,6 @@
         </div>
     </div>
 
-    <!-- Модальное окно -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal">
             <button class="modal-close" id="modalClose">&times;</button>
@@ -46,6 +57,77 @@
             <h3 class="modal-title" id="modalTitle">Заголовок</h3>
             <p class="modal-text" id="modalText">Текст сообщения...</p>
             <a href="#" target="_blank" class="modal-btn" id="modalBtn">Смотреть тренировку</a>
+        </div>
+    </div>
+
+    <div class="modal-overlay intro-overlay" id="introOverlay">
+        <div class="modal intro-modal">
+            <button class="modal-close" id="introCloseBtn" aria-label="Закрыть">&times;</button>
+            
+            <div class="intro-scroll-content">
+                <div class="intro-header">
+                    <div class="modal-icon">⭐</div>
+                    <h2 class="intro-title">Добро пожаловать в адвент для легкой спины и красивой осанки!</h2>
+                    <div class="intro-badge">Весь декабрь мы будем заниматься всего по <strong>5-7 минут в день</strong></div>
+                </div>
+
+                <div class="intro-section-card">
+                    <h3>Почему спина сутулится и болит?</h3>
+                    <p>Когда вы стоите, идете или наклоняетесь завязать шнурки, основной вес тела должны держать <strong>ягодицы, ноги и мышцы живота</strong>, а движение должно идти за счет суставов.</p>
+                    <p>Но когда мы по 8 часов сидим на стуле, мышцы бездействуют и слабеют, а суставы без движения «деревенеют» — им не хватает смазки и привычки двигаться в полную силу.</p>
+                    <div class="intro-quote">
+                        <span class="quote-icon">⛺</span>
+                        <div>Тело работает как палатка на веревках: если спереди все туго натянуть и сжать, а сзади ослабить — палатку перекосит. Так же происходит и с нами: поэтому когда вы встаете, наклоняетесь или поворачиваетесь, всю нагрузку и чужую работу берут на себя <strong>поясница и шея</strong>. Они для этого не предназначены — от этого перенапрягаются и начинают болеть к вечеру.</div>
+                    </div>
+                </div>
+
+                <p class="intro-transition">Заставлять себя «держи спину ровно» бесполезно: вы напряжетесь, через три минуты отвлечетесь и снова скрутитесь. Чтобы спина держалась ровно сама собой, без усилий, мы за этот месяц поработаем и с суставами, и с мышцами:</p>
+
+                <div class="intro-zones-grid">
+                    <div class="zone-card">
+                        <span class="zone-emoji">🦴</span>
+                        <div><strong>Тазобедренные суставы</strong> — вернем им свободную подвижность. Когда таз легко сгибается и вращается, вы наклоняетесь и ходите за счет ног и ягодиц, а поясница остается в безопасности.</div>
+                    </div>
+                    <div class="zone-card">
+                        <span class="zone-emoji">🌀</span>
+                        <div><strong>Позвоночник и грудной отдел</strong> — мягко расшевелим каждый позвонок. Из-за сидения грудной отдел застывает как панцирь, и при любом повороте или наклоне сгибается только поясница. Вернем спине плавную гибкость, чтобы нагрузка распределялась равномерно.</div>
+                    </div>
+                    <div class="zone-card">
+                        <span class="zone-emoji">🍑</span>
+                        <div><strong>Ягодицы и живот</strong> — укрепим их. Они работают как природный поддерживающий пояс, который держит позвоночник и не дает пояснице перегружаться.</div>
+                    </div>
+                    <div class="zone-card">
+                        <span class="zone-emoji">👕</span>
+                        <div><strong>Грудь и плечи</strong> — когда мы сидим за столом или в телефоне, мышцы на груди постоянно сжаты и тянут плечи вперед, как тугая резинка. Мы мягко растянем их, и плечи сами вернутся на место.</div>
+                    </div>
+                    <div class="zone-card">
+                        <span class="zone-emoji">🎈</span>
+                        <div><strong>Ребра и шея</strong> — легкие находятся внутри грудной клетки, как воздушный шарик внутри корзины из ребер. Если ребра малоподвижны, легким некуда расширяться при вдохе, и человек начинает втягивать воздух мышцами шеи — от этого шея к вечеру каменная. Мы вернем ребрам подвижность, шея расслабится и встанет на место, а заодно уйдут утренние отеки и подтянется овал лица.</div>
+                    </div>
+                    <div class="zone-card">
+                        <span class="zone-emoji">🦶</span>
+                        <div><strong>Стопы</strong> — это фундамент и главный амортизатор тела. Если стопы жесткие и плохо пружинят при шаге, вся ударная нагрузка при ходьбе отдает прямо в колени и поясницу. Мы вернем стопам гибкость и правильную опору, чтобы разгрузить спину снизу.</div>
+                    </div>
+                </div>
+
+                <div class="intro-rules-card">
+                    <h3>3 простых правила:</h3>
+                    <div class="rule-item">
+                        <span class="rule-num">1</span>
+                        <div><strong>Сначала смотрим, потом делаем.</strong> В первые 10–15 секунд я показываю технику и основные ошибки, а дальше вы спокойно повторяете движение под музыку в своем темпе.</div>
+                    </div>
+                    <div class="rule-item">
+                        <span class="rule-num">2</span>
+                        <div><strong>Без спешки и счета.</strong> Двигайтесь плавно, в ритме своего дыхания — здесь не нужно потеть и уставать.</div>
+                    </div>
+                    <div class="rule-item">
+                        <span class="rule-num">3</span>
+                        <div><strong>Никакой боли.</strong> Допустимо только легкое вытяжение, тепло или чувствительность.</div>
+                    </div>
+                </div>
+
+                <button class="modal-btn intro-confirm-btn" id="introConfirmBtn">Всё понятно, зажечь звезду ✨</button>
+            </div>
         </div>
     </div>
 
